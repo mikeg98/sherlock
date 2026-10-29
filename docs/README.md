@@ -58,7 +58,7 @@ Accounts found will be stored in an individual text file with the corresponding 
 
 ```console
 $ sherlock --help
-usage: sherlock [-h] [--version] [--verbose] [--folderoutput FOLDEROUTPUT] [--output OUTPUT] [--csv] [--xlsx] [--site SITE_NAME] [--proxy PROXY_URL] [--dump-response]
+usage: sherlock [-h] [--version] [--verbose] [--folderoutput FOLDEROUTPUT] [--output OUTPUT] [--csv] [--xlsx] [--json-report] [--site SITE_NAME] [--proxy PROXY_URL] [--dump-response]
                 [--json JSON_FILE] [--timeout TIMEOUT] [--print-all] [--print-found] [--no-color] [--browse] [--local] [--nsfw] [--txt] [--ignore-exclusions]
                 USERNAMES [USERNAMES ...]
 
@@ -78,6 +78,7 @@ options:
                         If using single username, the output of the result will be saved to this file.
   --csv                 Create Comma-Separated Values (CSV) File.
   --xlsx                Create the standard file for the modern Microsoft Excel spreadsheet (xlsx).
+  --json-report         Create a JavaScript Object Notation (JSON) report file.
   --site SITE_NAME      Limit analysis to just the listed sites. Add multiple options to specify more than one site.
   --proxy PROXY_URL, -p PROXY_URL
                         Make requests over a proxy. e.g. socks5://127.0.0.1:1080
