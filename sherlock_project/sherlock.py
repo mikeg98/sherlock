@@ -22,6 +22,8 @@ import pandas as pd
 import os
 import re
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
+from datetime import datetime, timezone
+from json import dump as json_dump
 from json import loads as json_loads
 from time import monotonic
 from typing import Optional
@@ -167,6 +169,69 @@ def multiple_usernames(username):
     for i in checksymbols:
         allUsernames.append(username.replace("{?}", i))
     return allUsernames
+
+
+def report_rows(
+    username: str,
+    results: dict[str, dict[str, str | QueryResult]],
+    print_all: bool = False,
+) -> list[dict]:
+    """Build Report Rows.
+
+    Flattens query results into one row per site, as used by the CSV, XLSX
+    and JSON reports.
+
+    Keyword Arguments:
+    username               -- String indicating username the results are for.
+    results                -- Dictionary of results, as returned by sherlock().
+    print_all              -- Include sites where the username was not found.
+                              Default is False (only claimed sites).
+
+    Return Value:
+    List of dictionaries with the keys username, name, url_main, url_user,
+    exists, http_status, response_time_s and context.
+    """
+    rows = []
+    for site, result in results.items():
+        status: QueryResult = result["status"]
+        if not print_all and status.status != QueryStatus.CLAIMED:
+            continue
+
+        rows.append(
+            {
+                "username": username,
+                "name": site,
+                "url_main": result["url_main"],
+                "url_user": result["url_user"],
+                "exists": str(status.status),
+                "http_status": result["http_status"],
+                "response_time_s": status.query_time,
+                "context": status.context,
+            }
+        )
+    return rows
+
+
+def report_file_path(username: str, extension: str, folder: str | None = None) -> str:
+    """Return the report file path for a username, creating the folder if needed."""
+    file_name = f"{username}.{extension}"
+    if folder:
+        os.makedirs(folder, exist_ok=True)
+        return os.path.join(folder, file_name)
+    return file_name
+
+
+def write_json_report(username: str, rows: list[dict], file_path: str) -> None:
+    """Write report rows, plus run metadata, to a JSON file."""
+    report = {
+        "username": username,
+        "sherlock_version": __version__,
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "results": rows,
+    }
+    with open(file_path, "w", encoding="utf-8") as json_report:
+        json_dump(report, json_report, indent=2, ensure_ascii=False)
+        json_report.write("\n")
 
 
 def sherlock(
@@ -585,6 +650,13 @@ def main():
         help="Create the standard file for the modern Microsoft Excel spreadsheet (xlsx).",
     )
     parser.add_argument(
+        "--json-report",
+        action="store_true",
+        dest="json_report",
+        default=False,
+        help="Create a JavaScript Object Notation (JSON) report file.",
+    )
+    parser.add_argument(
         "--site",
         action="append",
         metavar="SITE_NAME",
@@ -842,89 +914,40 @@ def main():
                         file.write(dictionary["url_user"] + "\n")
                 file.write(f"Total Websites Username Detected On : {exists_counter}\n")
 
+        rows = report_rows(username, results, print_all=args.print_all)
+        csv_columns = [
+            "username",
+            "name",
+            "url_main",
+            "url_user",
+            "exists",
+            "http_status",
+            "response_time_s",
+        ]
+
         if args.csv:
-            result_file = f"{username}.csv"
-            if args.folderoutput:
-                # The usernames results should be stored in a targeted folder.
-                # If the folder doesn't exist, create it first
-                os.makedirs(args.folderoutput, exist_ok=True)
-                result_file = os.path.join(args.folderoutput, result_file)
-
+            result_file = report_file_path(username, "csv", args.folderoutput)
             with open(result_file, "w", newline="", encoding="utf-8") as csv_report:
-                writer = csv.writer(csv_report)
-                writer.writerow(
-                    [
-                        "username",
-                        "name",
-                        "url_main",
-                        "url_user",
-                        "exists",
-                        "http_status",
-                        "response_time_s",
-                    ]
+                writer = csv.DictWriter(
+                    csv_report, fieldnames=csv_columns, extrasaction="ignore"
                 )
-                for site in results:
-                    if (
-                        args.print_found
-                        and not args.print_all
-                        and results[site]["status"].status != QueryStatus.CLAIMED
-                    ):
-                        continue
+                writer.writeheader()
+                writer.writerows(rows)
 
-                    response_time_s = results[site]["status"].query_time
-                    if response_time_s is None:
-                        response_time_s = ""
-                    writer.writerow(
-                        [
-                            username,
-                            site,
-                            results[site]["url_main"],
-                            results[site]["url_user"],
-                            str(results[site]["status"].status),
-                            results[site]["http_status"],
-                            response_time_s,
-                        ]
-                    )
         if args.xlsx:
-            usernames = []
-            names = []
-            url_main = []
-            url_user = []
-            exists = []
-            http_status = []
-            response_time_s = []
-
-            for site in results:
-                if (
-                    args.print_found
-                    and not args.print_all
-                    and results[site]["status"].status != QueryStatus.CLAIMED
-                ):
-                    continue
-
-                if response_time_s is None:
-                    response_time_s.append("")
-                else:
-                    response_time_s.append(results[site]["status"].query_time)
-                usernames.append(username)
-                names.append(site)
-                url_main.append(results[site]["url_main"])
-                url_user.append(results[site]["url_user"])
-                exists.append(str(results[site]["status"].status))
-                http_status.append(results[site]["http_status"])
-
-            DataFrame = pd.DataFrame(
-                {
-                    "username": usernames,
-                    "name": names,
-                    "url_main": [f'=HYPERLINK(\"{u}\")' for u in url_main],
-                    "url_user": [f'=HYPERLINK(\"{u}\")' for u in url_user],
-                    "exists": exists,
-                    "http_status": http_status,
-                    "response_time_s": response_time_s,
-                }
+            DataFrame = pd.DataFrame(rows, columns=csv_columns)
+            DataFrame["url_main"] = [f'=HYPERLINK(\"{u}\")' for u in DataFrame["url_main"]]
+            DataFrame["url_user"] = [f'=HYPERLINK(\"{u}\")' for u in DataFrame["url_user"]]
+            DataFrame.to_excel(
+                report_file_path(username, "xlsx", args.folderoutput),
+                sheet_name="sheet1",
+                index=False,
             )
-            DataFrame.to_excel(f"{username}.xlsx", sheet_name="sheet1", index=False)
+
+        if args.json_report:
+            write_json_report(
+                username, rows, report_file_path(username, "json", args.folderoutput)
+            )
 
         print()
     query_notify.finish()

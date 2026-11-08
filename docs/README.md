@@ -59,9 +59,19 @@ sherlock user1 user2 user3
 
 Accounts found will be stored in an individual text file with the corresponding username (e.g ```user123.txt```).
 
+## Self-exposure audit
+
+Sherlock also ships a consent-focused companion command, `sherlock-self-audit`, for checking **your own** footprint. Give it usernames you use and it reports where they are registered, then appends curated links for reducing that exposure — data-broker opt-outs, search-engine removal, and breach checks. It is meant for auditing your own accounts (or helping someone who has asked you to); it gathers no personal data beyond the same public username lookups Sherlock already performs.
+
+```bash
+sherlock-self-audit myusername --email me@example.com -o my-audit.md
+```
+
+Adult/NSFW sites are excluded unless you pass `--nsfw`. Use `--json FILE` to also save a machine-readable report. See `sherlock-self-audit --help` for all options.
+
 ```console
 $ sherlock --help
-usage: sherlock [-h] [--version] [--verbose] [--folderoutput FOLDEROUTPUT] [--output OUTPUT] [--csv] [--xlsx] [--site SITE_NAME] [--proxy PROXY_URL] [--dump-response]
+usage: sherlock [-h] [--version] [--verbose] [--folderoutput FOLDEROUTPUT] [--output OUTPUT] [--csv] [--xlsx] [--json-report] [--site SITE_NAME] [--proxy PROXY_URL] [--dump-response]
                 [--json JSON_FILE] [--timeout TIMEOUT] [--print-all] [--print-found] [--no-color] [--browse] [--local] [--nsfw] [--txt] [--ignore-exclusions]
                 USERNAMES [USERNAMES ...]
 
@@ -81,6 +91,7 @@ options:
                         If using single username, the output of the result will be saved to this file.
   --csv                 Create Comma-Separated Values (CSV) File.
   --xlsx                Create the standard file for the modern Microsoft Excel spreadsheet (xlsx).
+  --json-report         Create a JavaScript Object Notation (JSON) report file.
   --site SITE_NAME      Limit analysis to just the listed sites. Add multiple options to specify more than one site.
   --proxy PROXY_URL, -p PROXY_URL
                         Make requests over a proxy. e.g. socks5://127.0.0.1:1080
