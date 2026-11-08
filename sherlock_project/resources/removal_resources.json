@@ -1,0 +1,112 @@
+{
+  "_comment": "Curated, static reference of privacy / removal resources for the self-exposure audit. These are starting points the user should verify before acting; URLs and procedures change over time. Nothing here is queried automatically.",
+  "_last_reviewed": "2025-11",
+  "breach_check": [
+    {
+      "name": "Have I Been Pwned",
+      "url": "https://haveibeenpwned.com/",
+      "note": "Check whether an email address or phone number appears in known data breaches, and subscribe to be notified of future ones."
+    },
+    {
+      "name": "Firefox Monitor",
+      "url": "https://monitor.mozilla.org/",
+      "note": "Breach-exposure lookup and monitoring for an email address."
+    }
+  ],
+  "search_engine_removal": [
+    {
+      "name": "Google - Results about you",
+      "url": "https://support.google.com/websearch/answer/9673730",
+      "note": "Request removal of search results that expose your contact info (phone, home address, email), and monitor for new ones."
+    },
+    {
+      "name": "Google - Remove outdated content",
+      "url": "https://search.google.com/search-console/remove-outdated-content",
+      "note": "Ask Google to refresh or drop cached pages that still show information deleted at the source."
+    },
+    {
+      "name": "Bing - Content removal",
+      "url": "https://www.bing.com/webmasters/tools/contentremoval",
+      "note": "Report personal information or outdated cached pages for removal from Bing."
+    }
+  ],
+  "data_brokers": [
+    {
+      "name": "Spokeo",
+      "url": "https://www.spokeo.com/optout",
+      "note": "People-search broker. Find your listing, then submit the URL to opt out."
+    },
+    {
+      "name": "Whitepages",
+      "url": "https://www.whitepages.com/suppression-requests",
+      "note": "Suppress your listing; may require phone verification."
+    },
+    {
+      "name": "BeenVerified",
+      "url": "https://www.beenverified.com/app/optout/search",
+      "note": "Search for your record and opt out."
+    },
+    {
+      "name": "Intelius",
+      "url": "https://www.intelius.com/opt-out/",
+      "note": "Opt out of Intelius and several affiliated people-search sites."
+    },
+    {
+      "name": "TruePeopleSearch",
+      "url": "https://www.truepeoplesearch.com/removal",
+      "note": "Free people-search site with a direct removal form."
+    },
+    {
+      "name": "FastPeopleSearch",
+      "url": "https://www.fastpeoplesearch.com/removal",
+      "note": "Removal form; locate your record first."
+    },
+    {
+      "name": "PeopleFinders",
+      "url": "https://www.peoplefinders.com/opt-out",
+      "note": "Opt-out form for the PeopleFinders listing."
+    },
+    {
+      "name": "Radaris",
+      "url": "https://radaris.com/control/privacy",
+      "note": "Claim and control (hide) your Radaris profile."
+    },
+    {
+      "name": "MyLife",
+      "url": "https://www.mylife.com/ccpa/index.pubview",
+      "note": "Submit a CCPA deletion / opt-out request."
+    },
+    {
+      "name": "Instant Checkmate",
+      "url": "https://www.instantcheckmate.com/opt-out/",
+      "note": "Opt out of this background-report broker."
+    },
+    {
+      "name": "US Search",
+      "url": "https://www.ussearch.com/opt-out/",
+      "note": "Opt-out form for the US Search listing."
+    },
+    {
+      "name": "Acxiom",
+      "url": "https://www.acxiom.com/optout/",
+      "note": "Large marketing-data broker; opt out of its data products."
+    },
+    {
+      "name": "LexisNexis",
+      "url": "https://optout.lexisnexis.com/",
+      "note": "Opt out where eligible (e.g. law-enforcement / FCRA criteria apply to some data)."
+    }
+  ],
+  "guidance": [
+    {
+      "name": "EFF - Surveillance Self-Defense",
+      "url": "https://ssd.eff.org/",
+      "note": "Practical guides on account security, data minimization and protecting yourself from doxxing."
+    },
+    {
+      "name": "Access Now Digital Security Helpline",
+      "url": "https://www.accessnow.org/help/",
+      "note": "Free help for people facing targeted harassment or account compromise."
+    }
+  ]
+}
